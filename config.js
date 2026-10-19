@@ -3,7 +3,7 @@
 // A provider whose client ID is blank has its sign-in button hidden.
 window.TF_CONFIG = {
   // Microsoft Entra app registration "Transition Form": Application (client) ID.
-  microsoftClientId: "",
+  microsoftClientId: "15580770-a75d-45c4-8a85-8929fcfea010",
 
   // Google Cloud OAuth client ID (web application), ending in .apps.googleusercontent.com.
   googleClientId: "747329705829-4r79etv7jc0454opf95h46dt06gia0ic.apps.googleusercontent.com"
