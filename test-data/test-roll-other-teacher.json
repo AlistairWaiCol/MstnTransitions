@@ -1,0 +1,256 @@
+{
+  "format": "transition-roll",
+  "version": 1,
+  "saved_at": "2026-10-20T00:00:00Z",
+  "roll": {
+    "transition_year": 2026,
+    "default_student_year": "Year 6",
+    "teacher_email": "pania.madeup@fernridge.school.nz",
+    "sending_school_domain": "fernridge.school.nz"
+  },
+  "withdrawals": [],
+  "students": [
+    {
+      "record_id": "628c83f7-142d-461d-93c0-b72350d92072",
+      "destination_school_domain": "mis.school.nz",
+      "last_sent": null,
+      "fields": {
+        "student_name": "Ruby-Jane Takerei",
+        "student_year": "Year 6",
+        "enrolment_completed": "Yes",
+        "flags": [
+          "Agency involvement"
+        ],
+        "truancy_issues": "Yes",
+        "attendance_percent": "71.5",
+        "truancy_services_involved": "Yes",
+        "truancy_interventions": "Weekly check-ins with whānau, a morning breakfast club place, and a home visit in Term 3 from the attendance officer.",
+        "gifted_learner": "No",
+        "gifted_details": "",
+        "special_interests": [
+          "Cultural"
+        ],
+        "special_interest_details": "Strong te reo speaker and helps younger students with karakia.",
+        "reading": "Developing",
+        "writing": "Developing",
+        "maths": "Emerging",
+        "learning_support_diagnosis": [],
+        "learning_other_details": "",
+        "has_iep": "",
+        "learning_contact_school": "",
+        "health_needs": "",
+        "health_plan": "",
+        "health_transition_info": "",
+        "health_contact_school": "",
+        "behaviour_risk": "",
+        "behaviour_plan": "",
+        "behaviour_contact_school": "",
+        "agencies": [
+          "RTLB",
+          "Oranga Tamariki",
+          "Other"
+        ],
+        "agencies_other": "Family support worker from a local trust.",
+        "assistive_technology_details": "",
+        "kc_thinking": "3",
+        "kc_using_language": "4",
+        "kc_managing_self": "2",
+        "kc_relating_to_others": "3",
+        "kc_participating": "3",
+        "other_information": "Attendance has been improving since the breakfast club began. Ruby-Jane is warm and capable when she is at school."
+      }
+    },
+    {
+      "record_id": "739f5d2f-3ace-40e1-80e3-b449a4988a35",
+      "destination_school_domain": "mis.school.nz",
+      "last_sent": null,
+      "fields": {
+        "student_name": "Hōhepa Mataira",
+        "student_year": "Year 6",
+        "enrolment_completed": "Unknown",
+        "flags": [
+          "ESOL",
+          "ESOL funded",
+          "Refugee status"
+        ],
+        "truancy_issues": "No",
+        "attendance_percent": "90",
+        "truancy_services_involved": "",
+        "truancy_interventions": "",
+        "gifted_learner": "No",
+        "gifted_details": "",
+        "special_interests": [
+          "N/A"
+        ],
+        "special_interest_details": "",
+        "reading": "Emerging",
+        "writing": "Emerging",
+        "maths": "Developing",
+        "learning_support_diagnosis": [],
+        "learning_other_details": "",
+        "has_iep": "",
+        "learning_contact_school": "",
+        "health_needs": "",
+        "health_plan": "",
+        "health_transition_info": "",
+        "health_contact_school": "",
+        "behaviour_risk": "",
+        "behaviour_plan": "",
+        "behaviour_contact_school": "",
+        "agencies": [],
+        "agencies_other": "",
+        "assistive_technology_details": "",
+        "kc_thinking": "2",
+        "kc_using_language": "2",
+        "kc_managing_self": "3",
+        "kc_relating_to_others": "3",
+        "kc_participating": "3",
+        "other_information": "Hōhepa arrived two years ago and is making steady progress in English. His family are very engaged and speak three languages at home."
+      }
+    },
+    {
+      "record_id": "ea9b8812-6738-4963-afd6-3476148f93b9",
+      "destination_school_domain": "mis.school.nz",
+      "last_sent": null,
+      "fields": {
+        "student_name": "Isla Cartwright",
+        "student_year": "Year 6",
+        "enrolment_completed": "Yes",
+        "flags": [
+          "Assistive technology support"
+        ],
+        "truancy_issues": "No",
+        "attendance_percent": "96",
+        "truancy_services_involved": "",
+        "truancy_interventions": "",
+        "gifted_learner": "No",
+        "gifted_details": "",
+        "special_interests": [
+          "Digital / Technology"
+        ],
+        "special_interest_details": "Helps other students with the class tablets.",
+        "reading": "Emerging",
+        "writing": "Emerging",
+        "maths": "Consolidating",
+        "learning_support_diagnosis": [],
+        "learning_other_details": "",
+        "has_iep": "",
+        "learning_contact_school": "",
+        "health_needs": "",
+        "health_plan": "",
+        "health_transition_info": "",
+        "health_contact_school": "",
+        "behaviour_risk": "",
+        "behaviour_plan": "",
+        "behaviour_contact_school": "",
+        "agencies": [],
+        "agencies_other": "",
+        "assistive_technology_details": "Uses a tablet with text-to-speech and word prediction for all writing.",
+        "kc_thinking": "3",
+        "kc_using_language": "3",
+        "kc_managing_self": "3",
+        "kc_relating_to_others": "4",
+        "kc_participating": "4",
+        "other_information": "Isla said, \"I like it when the words read themselves to me, but I still want to write my own ideas.\"\nWe agree, and her ideas are excellent, original and funny."
+      }
+    },
+    {
+      "record_id": "d93ba347-0500-42d1-96dc-ea6bd858cf9e",
+      "destination_school_domain": "mis.school.nz",
+      "last_sent": null,
+      "fields": {
+        "student_name": "Mateo Alvarez-Smith",
+        "student_year": "Year 6",
+        "enrolment_completed": "Yes",
+        "flags": [
+          "ORS funded",
+          "Learning needs",
+          "Recent LSC Intervention"
+        ],
+        "truancy_issues": "No",
+        "attendance_percent": "100",
+        "truancy_services_involved": "",
+        "truancy_interventions": "",
+        "gifted_learner": "No",
+        "gifted_details": "",
+        "special_interests": [
+          "N/A"
+        ],
+        "special_interest_details": "",
+        "reading": "Emerging",
+        "writing": "Emerging",
+        "maths": "Emerging",
+        "learning_support_diagnosis": [
+          "ASD",
+          "Sensory needs"
+        ],
+        "learning_other_details": "",
+        "has_iep": "Yes",
+        "learning_contact_school": "Yes",
+        "health_needs": "",
+        "health_plan": "",
+        "health_transition_info": "",
+        "health_contact_school": "",
+        "behaviour_risk": "",
+        "behaviour_plan": "",
+        "behaviour_contact_school": "",
+        "agencies": [],
+        "agencies_other": "",
+        "assistive_technology_details": "",
+        "kc_thinking": "2",
+        "kc_using_language": "2",
+        "kc_managing_self": "2",
+        "kc_relating_to_others": "3",
+        "kc_participating": "2",
+        "other_information": "Mateo thrives on routine and a visual timetable. His teacher aide is a key relationship, and a gradual transition would help."
+      }
+    },
+    {
+      "record_id": "e901e8fc-aa3d-40fe-9d2b-901f8dd9d6b8",
+      "destination_school_domain": "mis.school.nz",
+      "last_sent": null,
+      "fields": {
+        "student_name": "Nikau Brown",
+        "student_year": "Year 6",
+        "enrolment_completed": "Yes",
+        "flags": [
+          "Health & Wellbeing needs"
+        ],
+        "truancy_issues": "No",
+        "attendance_percent": "93",
+        "truancy_services_involved": "",
+        "truancy_interventions": "",
+        "gifted_learner": "No",
+        "gifted_details": "",
+        "special_interests": [
+          "Sports",
+          "Cultural"
+        ],
+        "special_interest_details": "Plays cricket, and performs with the school kapa haka group.",
+        "reading": "Proficient",
+        "writing": "Proficient",
+        "maths": "Consolidating",
+        "learning_support_diagnosis": [],
+        "learning_other_details": "",
+        "has_iep": "",
+        "learning_contact_school": "",
+        "health_needs": "Yes",
+        "health_plan": "Yes",
+        "health_transition_info": "Type 1 diabetes, managed with a pump.\nThe school nurse has trained two staff, and the plan is attached to his file.",
+        "health_contact_school": "Yes",
+        "behaviour_risk": "",
+        "behaviour_plan": "",
+        "behaviour_contact_school": "",
+        "agencies": [],
+        "agencies_other": "",
+        "assistive_technology_details": "",
+        "kc_thinking": "4",
+        "kc_using_language": "4",
+        "kc_managing_self": "4",
+        "kc_relating_to_others": "5",
+        "kc_participating": "5",
+        "other_information": "Nikau is a confident, kind student and a natural team player."
+      }
+    }
+  ]
+}

@@ -1,5 +1,6 @@
-// Builds the fictional test file, following csv-format.md (version 1) rules 1 to 6.
-(function () {
+// Reads and writes CSV to csv-format.md (version 1), and builds the Phase A fictional test file.
+// It has no page dependencies, so the rules test page can load it on its own.
+(function (root) {
   "use strict";
 
   var COLUMNS = [
@@ -20,14 +21,30 @@
 
   var MULTI_SELECT = ["flags", "special_interests", "learning_support_diagnosis", "agencies"];
   var ROW_END = "\r\n";
+  var BOM = "﻿";
 
-  // Rule 4: text starting with =, +, - or @ gets a leading apostrophe.
-  function spreadsheetSafe(value) {
-    return /^[=+\-@]/.test(value) ? "'" + value : value;
+  // ---- Rule 4: spreadsheet safety ----
+
+  // A value needs protecting if it starts with zero or more apostrophes followed by
+  // =, +, -, @, a tab or a carriage return.
+  function needsProtecting(value) {
+    return /^'*[=+\-@\t\r]/.test(value);
   }
 
+  // Writing adds one apostrophe to a value that needs protecting.
+  function protect(value) {
+    return needsProtecting(value) ? "'" + value : value;
+  }
+
+  // Reading strips exactly one apostrophe, and only from a value that needs protecting.
+  // So "'=Needs" reads as "=Needs", "''=x" as "'=x", and "'hello" is left alone.
+  function unprotect(value) {
+    return value.charAt(0) === "'" && needsProtecting(value) ? value.slice(1) : value;
+  }
+
+  // ---- Writing ----
+
   // Rule 2: quote a field containing a comma, double quote or line break; double inner quotes.
-  // Line breaks inside a cell are kept as LF; rows end with CRLF.
   function quote(value) {
     return /[",\r\n]/.test(value) ? '"' + value.replace(/"/g, '""') + '"' : value;
   }
@@ -35,8 +52,9 @@
   function cell(column, value) {
     if (value === undefined || value === null) return "";
     if (MULTI_SELECT.indexOf(column) !== -1 && Array.isArray(value)) value = value.join("; ");
-    var text = String(value).replace(/\r\n?/g, "\n");
-    return quote(spreadsheetSafe(text));
+    // Rule 8: a line break inside a cell is a single LF. Done before rule 4, so the
+    // protected value is exactly what a reader sees.
+    return quote(protect(String(value).replace(/\r\n?/g, "\n")));
   }
 
   function buildCsv(rows) {
@@ -58,6 +76,96 @@
     bytes.set(body, 3);
     return bytes;
   }
+
+  // ---- Reading ----
+
+  // Splits CSV text into rows of raw cells: a proper parser, never splitting on commas or lines.
+  // Strips a byte-order mark, accepts CRLF or LF anywhere, keeps line breaks inside quoted cells
+  // and undoubles quotes. Throws on a quote that is never closed, or stray text after a closing
+  // quote, rather than guessing.
+  function parse(text) {
+    text = String(text);
+    if (text.charAt(0) === BOM) text = text.slice(1);
+    var rows = [];
+    var row = [];
+    var value = "";
+    var i = 0;
+    var line = 1;
+    var atCellStart = true;
+
+    function endCell() { row.push(value); value = ""; atCellStart = true; }
+    function endRow() { endCell(); rows.push(row); row = []; }
+
+    while (i < text.length) {
+      var ch = text.charAt(i);
+      if (atCellStart && ch === '"') {
+        // A quoted cell runs to the next quote that is not doubled.
+        var startLine = line;
+        i++;
+        for (;;) {
+          if (i >= text.length) throw new Error("A quoted value starting on line " + startLine + " is never closed.");
+          var c = text.charAt(i);
+          if (c === '"') {
+            if (text.charAt(i + 1) === '"') { value += '"'; i += 2; continue; }
+            i++;
+            break;
+          }
+          if (c === "\r") {
+            value += "\n";
+            i += text.charAt(i + 1) === "\n" ? 2 : 1;
+            line++;
+            continue;
+          }
+          if (c === "\n") line++;
+          value += c;
+          i++;
+        }
+        var next = text.charAt(i);
+        if (i < text.length && next !== "," && next !== "\r" && next !== "\n") {
+          throw new Error("Unexpected text after a closing quote on line " + line + ".");
+        }
+        atCellStart = false;
+        continue;
+      }
+      if (ch === ",") { endCell(); i++; continue; }
+      if (ch === "\r" || ch === "\n") {
+        endRow();
+        i += ch === "\r" && text.charAt(i + 1) === "\n" ? 2 : 1;
+        line++;
+        continue;
+      }
+      value += ch;
+      atCellStart = false;
+      i++;
+    }
+    // The last row, unless the text ended with a line break.
+    if (!atCellStart || row.length > 0) endRow();
+    return rows;
+  }
+
+  // Reads CSV text with a header row into objects keyed by column name. Cell values are trimmed
+  // of the rule 4 apostrophe, and blank lines are skipped. A row with the wrong number of cells
+  // is an error, not a guess.
+  function readRecords(text) {
+    var rows = parse(text).filter(function (cells) {
+      return !(cells.length === 1 && cells[0] === "");
+    });
+    if (rows.length === 0) throw new Error("The file is empty.");
+    var header = rows[0].map(function (name) { return name.trim(); });
+    return {
+      columns: header,
+      records: rows.slice(1).map(function (cells, index) {
+        if (cells.length !== header.length) {
+          throw new Error("Row " + (index + 2) + " has " + cells.length + " values; the header has " + header.length + ".");
+        }
+        var record = {};
+        header.forEach(function (name, n) { record[name] = unprotect(cells[n]); });
+        return record;
+      })
+    };
+  }
+
+  // ---- Phase A test file ----
 
   // Rule 6: UTC in ISO 8601 to the second, for example 2026-10-16T02:30:00Z.
   function utcTimestamp(date) {
@@ -167,6 +275,19 @@
     };
   }
 
-  window.TF = window.TF || {};
-  window.TF.csv = { COLUMNS: COLUMNS, buildCsv: buildCsv, buildTestFile: buildTestFile, fileName: fileName, utcTimestamp: utcTimestamp };
-})();
+  root.TF = root.TF || {};
+  root.TF.csv = {
+    COLUMNS: COLUMNS,
+    MULTI_SELECT: MULTI_SELECT,
+    needsProtecting: needsProtecting,
+    protect: protect,
+    unprotect: unprotect,
+    buildCsv: buildCsv,
+    toBytes: toBytes,
+    parse: parse,
+    readRecords: readRecords,
+    buildTestFile: buildTestFile,
+    fileName: fileName,
+    utcTimestamp: utcTimestamp
+  };
+})(typeof window !== "undefined" ? window : globalThis);
