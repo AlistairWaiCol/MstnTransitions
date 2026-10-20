@@ -165,6 +165,9 @@ label.tick input, label.option input { margin-top: 0.15rem; }
 .settings-grid, .teacher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0 1.5rem; }
 .settings-grid .field, .teacher-grid .field { padding-left: 0; border-left: none; margin-bottom: 1rem; }
 
+.lock-note { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; color: var(--warn); font-weight: 600; }
+p.lock-note { margin-top: -0.25rem; }
+
 /* ---- Roll overview ---- */
 
 .save-bar {

@@ -6,14 +6,14 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self'; img-src 'self'; connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://accounts.google.com https://www.googleapis.com https://gmail.googleapis.com; frame-src https://accounts.google.com; base-uri 'none'; form-action 'none'; object-src 'none'">
   <title>Student transition form</title>
-  <link rel="stylesheet" href="css/form.css?v=2026-10-20a">
+  <link rel="stylesheet" href="css/form.css?v=2026-10-20b">
 </head>
 <body>
   <!-- Runs first. If this window is the Microsoft sign-in popup returning to us, it hands the
        response back to the main page and closes, and the rest of the page does not start.
        Microsoft returns to the site root, so this page must keep loading these two scripts first. -->
-  <script src="vendor/msal-redirect-bridge-5.23.0.min.js?v=2026-10-20a"></script>
-  <script src="js/popup-bridge.js?v=2026-10-20a"></script>
+  <script src="vendor/msal-redirect-bridge-5.23.0.min.js?v=2026-10-20b"></script>
+  <script src="js/popup-bridge.js?v=2026-10-20b"></script>
 
   <div id="app">
     <header class="site-header">
@@ -129,7 +129,11 @@
         </div>
         <p id="roll-empty" class="hint">No students yet. Choose Add student to begin.</p>
         <div class="buttons">
-          <button type="button" id="add-student">Add student</button>
+          <button type="button" id="add-student" aria-describedby="add-lock-text">Add student</button>
+          <span id="add-lock" class="lock-note" hidden>
+            <span id="add-lock-text">Save your roll to a file first, so nothing is lost.</span>
+            <button type="button" id="add-lock-save" class="secondary">Save</button>
+          </span>
         </div>
         <h2 class="small-heading">Other roll actions</h2>
         <div class="buttons">
@@ -146,9 +150,13 @@
         <div id="student-summary" class="summary" role="status"></div>
         <form id="student-form" novalidate></form>
         <div class="buttons form-end">
-          <button type="button" id="save-add-another">Save and add another student</button>
+          <button type="button" id="save-add-another" aria-describedby="student-lock-text">Save and add another student</button>
           <button type="button" id="back-bottom" class="secondary">Back to the roll</button>
         </div>
+        <p id="student-lock" class="lock-note" hidden>
+          <span id="student-lock-text">Save your roll to a file first, so nothing is lost.</span>
+          <button type="button" id="student-lock-save" class="secondary">Save</button>
+        </p>
         <p id="student-save-status" class="hint small" role="status"></p>
       </section>
     </main>
@@ -162,17 +170,17 @@
     </dialog>
   </div>
 
-  <script src="config.js?v=2026-10-20a"></script>
-  <script src="vendor/msal-browser-5.23.0.min.js?v=2026-10-20a"></script>
-  <script src="js/csv.js?v=2026-10-20a"></script>
-  <script src="js/fields.js?v=2026-10-20a"></script>
-  <script src="js/rules.js?v=2026-10-20a"></script>
-  <script src="js/rollfile.js?v=2026-10-20a"></script>
-  <script src="js/schools.js?v=2026-10-20a"></script>
-  <script src="js/microsoft.js?v=2026-10-20a"></script>
-  <script src="js/google.js?v=2026-10-20a"></script>
-  <script src="js/savefile.js?v=2026-10-20a"></script>
-  <script src="js/form.js?v=2026-10-20a"></script>
-  <script src="js/app.js?v=2026-10-20a"></script>
+  <script src="config.js?v=2026-10-20b"></script>
+  <script src="vendor/msal-browser-5.23.0.min.js?v=2026-10-20b"></script>
+  <script src="js/csv.js?v=2026-10-20b"></script>
+  <script src="js/fields.js?v=2026-10-20b"></script>
+  <script src="js/rules.js?v=2026-10-20b"></script>
+  <script src="js/rollfile.js?v=2026-10-20b"></script>
+  <script src="js/schools.js?v=2026-10-20b"></script>
+  <script src="js/microsoft.js?v=2026-10-20b"></script>
+  <script src="js/google.js?v=2026-10-20b"></script>
+  <script src="js/savefile.js?v=2026-10-20b"></script>
+  <script src="js/form.js?v=2026-10-20b"></script>
+  <script src="js/app.js?v=2026-10-20b"></script>
 </body>
 </html>

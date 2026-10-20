@@ -84,6 +84,34 @@
     return addresses.some(function (a) { return a && String(a).trim().toLowerCase() === owner; });
   }
 
+  // ---- Save before adding students (DECISIONS.md, decided 2026-10-20) ----
+
+  // Whether students may be added, after something happens to the roll. A roll must have been
+  // saved to a file before any student is added, so it never exists only in page memory.
+  //   "new-roll"                    a new roll is started: locked, even after another roll this visit
+  //   "saved-to-file"               a save to the chosen file finished (Chrome and Edge)
+  //   "copy-downloaded"             Save a copy downloaded the file
+  //   "opened-by-upload"            a saved roll was opened by upload (other browsers)
+  //   "opened-writable"             a saved roll was opened and the browser allows writing to it
+  //   "opened-not-writable"         a saved roll was opened but writing is not allowed yet
+  //   "taken-over"                  "Open as a new roll for me": the original file is forgotten
+  // Anything else leaves it as it was.
+  function canAddAfter(current, event) {
+    switch (event) {
+      case "saved-to-file":
+      case "copy-downloaded":
+      case "opened-by-upload":
+      case "opened-writable":
+        return true;
+      case "new-roll":
+      case "opened-not-writable":
+      case "taken-over":
+        return false;
+      default:
+        return Boolean(current);
+    }
+  }
+
   // ---- Reading ----
 
   function isPlainObject(value) {
@@ -251,6 +279,7 @@
     removeStudent: removeStudent,
     takeOver: takeOver,
     belongsTo: belongsTo,
+    canAddAfter: canAddAfter,
     parse: parse,
     serialise: serialise,
     fileName: fileName

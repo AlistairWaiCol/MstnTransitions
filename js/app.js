@@ -6,7 +6,7 @@
 
   if (window.TF_IS_AUTH_POPUP) return;
 
-  var VERSION = "2026-10-20a";
+  var VERSION = "2026-10-20b";
   var F = TF.fields;
   var R = TF.rules;
   var RF = TF.rollfile;
@@ -29,6 +29,7 @@
     handle: null,        // File System Access handle, memory only
     fileName: "",
     permissionNeeded: false,
+    canAdd: false,       // students may be added only once the roll is saved to a file
     changeCount: 0,
     savedCount: 0,
     dirty: false,
@@ -162,7 +163,7 @@
       text = state.saveError;
     } else if (state.dirty) {
       if (state.handle && !state.permissionNeeded) text = "Saving…";
-      else if (state.handle) text = "Unsaved changes. Choose Save to keep saving to " + name + ".";
+      else if (state.handle) text = "Unsaved changes. Choose Continue saving to this file to save them to " + name + ".";
       else if (SAVE.supportsHandles) text = "Unsaved changes. Choose Save to pick where to keep this roll.";
       else text = "Unsaved changes. Choose Save a copy to download the roll.";
     } else if (state.lastSavedAt && state.handle) {
@@ -171,7 +172,7 @@
       text = "Copy downloaded at " + clockTime(state.lastCopyAt) + ". Look in your Downloads folder.";
     } else if (state.openedAt && state.handle) {
       text = state.permissionNeeded
-        ? "Opened " + name + ". When you make a change, choose Save to keep saving to this file."
+        ? "Opened " + name + ". Choose Continue saving to this file so your changes are saved to it."
         : "Opened " + name + ". Changes are saved to this file as you go.";
     } else if (state.openedAt) {
       text = "Opened " + name + ". No changes yet.";
@@ -182,6 +183,33 @@
     el("save-status").classList.toggle("unsaved", state.dirty || Boolean(state.saveError));
     el("student-save-status").textContent = text;
     el("save").hidden = !SAVE.supportsHandles;
+    el("save").textContent = saveLabel();
+    updateAddLock();
+  }
+
+  // What the save action is called right now: after opening a file the browser has not yet
+  // allowed writing to, it is "Continue saving to this file".
+  function saveLabel() {
+    if (state.handle && state.permissionNeeded) return "Continue saving to this file";
+    return SAVE.supportsHandles ? "Save" : "Save a copy";
+  }
+
+  // The save offered beside a locked Add button: Save (Chrome and Edge) or Save a copy.
+  function saveFromLock() {
+    if (SAVE.supportsHandles) saveToFile();
+    else saveCopy();
+  }
+
+  // "Add student" and "Save and add another student" stay disabled, with a plain reason and a
+  // save button beside them, until the roll has been saved to a file (DECISIONS.md).
+  function updateAddLock() {
+    var locked = Boolean(state.roll) && !state.canAdd;
+    el("add-student").disabled = locked;
+    el("save-add-another").disabled = locked;
+    el("add-lock").hidden = !locked;
+    el("student-lock").hidden = !locked;
+    el("add-lock-save").textContent = saveLabel();
+    el("student-lock-save").textContent = saveLabel();
   }
 
   function markChanged() {
@@ -217,6 +245,7 @@
       state.lastSavedAt = new Date();
       state.dirty = state.changeCount !== state.savedCount;
       state.saveError = "";
+      state.canAdd = RF.canAddAfter(state.canAdd, "saved-to-file");
       ok = true;
     } catch (error) {
       state.saveError = "Could not save to " + state.fileName + ": " + (error && error.message ? error.message : error) +
@@ -266,6 +295,7 @@
     state.dirty = false;
     state.saveError = "";
     state.lastCopyAt = new Date();
+    state.canAdd = RF.canAddAfter(state.canAdd, "copy-downloaded");
     if (!state.handle) state.fileName = name;
     updateSaveStatus();
   }
@@ -297,6 +327,7 @@
     state.handle = handle || null;
     state.fileName = fileName || "";
     state.permissionNeeded = false;
+    state.canAdd = false;
     state.changeCount = 0;
     state.savedCount = 0;
     state.dirty = false;
@@ -385,6 +416,7 @@
       teacherEmail: state.account.email,
       sendingSchoolDomain: state.identity.sendingDomain
     }), null, "", false);
+    state.canAdd = RF.canAddAfter(state.canAdd, "new-roll");
     showRoll();
   }
 
@@ -440,9 +472,13 @@
     setRoll(roll, handle, takenOver ? "" : picked.name, true);
     if (takenOver) {
       state.openedAt = null;
+      state.canAdd = RF.canAddAfter(state.canAdd, "taken-over");
       markChanged();
     } else if (handle) {
       state.permissionNeeded = !(await SAVE.hasWritePermission(handle));
+      state.canAdd = RF.canAddAfter(state.canAdd, state.permissionNeeded ? "opened-not-writable" : "opened-writable");
+    } else {
+      state.canAdd = RF.canAddAfter(state.canAdd, "opened-by-upload");
     }
     showRoll();
   }
@@ -563,6 +599,7 @@
   }
 
   function addStudent() {
+    if (!state.canAdd) return;
     var student = RF.newStudent(state.roll);
     state.roll.students.push(student);
     markChanged();
@@ -576,6 +613,7 @@
   }
 
   function saveAndAddAnother() {
+    if (!state.canAdd) return;
     // Answers are kept as they are typed; with a chosen file, write now rather than waiting.
     if (state.handle && state.dirty && !state.permissionNeeded) writeNow();
     addStudent();
@@ -726,6 +764,8 @@
     el("add-student").addEventListener("click", addStudent);
     el("save").addEventListener("click", saveToFile);
     el("save-copy").addEventListener("click", saveCopy);
+    el("add-lock-save").addEventListener("click", saveFromLock);
+    el("student-lock-save").addEventListener("click", saveFromLock);
 
     el("roll-year").addEventListener("change", function () {
       var year = readYear(el("roll-year"));

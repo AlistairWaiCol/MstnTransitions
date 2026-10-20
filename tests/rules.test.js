@@ -387,6 +387,36 @@
     assert.equal(RF.belongsTo(roll, ["someone@else.nz", undefined]), false);
   });
 
+  // ---- Save before adding students (change request 1) ----
+
+  test("Save before adding: a new roll is locked", function () {
+    assert.equal(RF.canAddAfter(false, "new-roll"), false);
+    assert.equal(RF.canAddAfter(true, "new-roll"), false, "even after finishing another roll this visit");
+  });
+
+  test("Save before adding: unlocked after the first save to a file, or after Save a copy", function () {
+    assert.equal(RF.canAddAfter(RF.canAddAfter(false, "new-roll"), "saved-to-file"), true);
+    assert.equal(RF.canAddAfter(RF.canAddAfter(false, "new-roll"), "copy-downloaded"), true);
+  });
+
+  test("Save before adding: opening unlocks only when the file can be saved to", function () {
+    assert.equal(RF.canAddAfter(false, "opened-by-upload"), true);
+    assert.equal(RF.canAddAfter(false, "opened-writable"), true);
+    assert.equal(RF.canAddAfter(true, "opened-not-writable"), false);
+    assert.equal(RF.canAddAfter(RF.canAddAfter(false, "opened-not-writable"), "saved-to-file"), true, "Continue saving to this file");
+  });
+
+  test("Save before adding: locked again after \"Open as a new roll for me\"", function () {
+    var unlocked = RF.canAddAfter(false, "saved-to-file");
+    assert.equal(RF.canAddAfter(unlocked, "taken-over"), false);
+    assert.equal(RF.canAddAfter(RF.canAddAfter(unlocked, "taken-over"), "saved-to-file"), true);
+  });
+
+  test("Save before adding: other events leave it as it was", function () {
+    assert.equal(RF.canAddAfter(true, "student-edited"), true);
+    assert.equal(RF.canAddAfter(false, "student-edited"), false);
+  });
+
   // ---- The working file ----
 
   function savedRoll() {
