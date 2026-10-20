@@ -4,58 +4,175 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self'; img-src 'self'; connect-src https://login.microsoftonline.com https://graph.microsoft.com https://accounts.google.com https://www.googleapis.com https://gmail.googleapis.com; frame-src https://accounts.google.com; base-uri 'none'; form-action 'none'; object-src 'none'">
-  <title>Transition Form sign-in test</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self'; img-src 'self'; connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://accounts.google.com https://www.googleapis.com https://gmail.googleapis.com; frame-src https://accounts.google.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>Student transition form</title>
+  <link rel="stylesheet" href="css/form.css?v=2026-10-20a">
 </head>
 <body>
   <!-- Runs first. If this window is the Microsoft sign-in popup returning to us, it hands the
-       response back to the main page and closes, and the rest of the page does not start. -->
-  <script src="vendor/msal-redirect-bridge-5.23.0.min.js"></script>
-  <script src="js/popup-bridge.js"></script>
+       response back to the main page and closes, and the rest of the page does not start.
+       Microsoft returns to the site root, so this page must keep loading these two scripts first. -->
+  <script src="vendor/msal-redirect-bridge-5.23.0.min.js?v=2026-10-20a"></script>
+  <script src="js/popup-bridge.js?v=2026-10-20a"></script>
 
-  <main id="app">
-    <header>
-      <h1>Transition Form: sign-in and sending test</h1>
-      <p class="notice">Throwaway test page for Phase A. It uses fictional test data only. The test email goes only to your own address.</p>
+  <div id="app">
+    <header class="site-header">
+      <div class="wrap header-row">
+        <p class="site-title">Student transition form</p>
+        <div id="header-account" class="header-account" hidden>
+          <span id="header-teacher"></span>
+          <button type="button" id="sign-out" class="secondary small">Sign out</button>
+        </div>
+      </div>
     </header>
 
-    <section id="signin-section" aria-labelledby="signin-heading">
-      <h2 id="signin-heading">1. Sign in</h2>
-      <p id="no-providers" hidden>No sign-in provider is set up yet. Add a client ID to <code>config.js</code>.</p>
-      <div class="buttons">
-        <button type="button" id="ms-signin" hidden>Sign in with Microsoft</button>
-        <button type="button" id="google-signin" hidden>Sign in with Google</button>
-      </div>
-    </section>
+    <main class="wrap">
+      <div id="banner" class="banner" role="alert" hidden></div>
 
-    <section id="account-section" aria-labelledby="account-heading" hidden>
-      <h2 id="account-heading">2. Signed-in account</h2>
-      <dl id="account-details"></dl>
-      <div class="buttons">
-        <button type="button" id="send-test">Send test email</button>
-        <button type="button" id="sign-out" class="secondary">Sign out</button>
-      </div>
-    </section>
+      <!-- Sign-in -->
+      <section id="signin-view" class="view" aria-labelledby="signin-heading">
+        <h1 id="signin-heading" tabindex="-1">Sign in</h1>
+        <p>Teachers use this form to send information about their leaving students to each student's new school. Sign in with your school Microsoft or Google account.</p>
+        <div class="privacy">
+          <p id="privacy-text"></p>
+          <p id="privacy-nb" class="nb"></p>
+          <fieldset class="tick-fieldset">
+            <legend id="privacy-legend"></legend>
+            <label class="tick"><input type="checkbox" id="privacy-tick"> <span id="privacy-tick-text"></span></label>
+          </fieldset>
+        </div>
+        <p id="signin-loading" class="hint">Loading the sign-in buttons…</p>
+        <p id="no-providers" class="hint" hidden>No sign-in provider is set up. Add a client ID to <code>config.js</code>.</p>
+        <div class="buttons">
+          <button type="button" id="ms-signin" hidden disabled>Sign in with Microsoft</button>
+          <button type="button" id="google-signin" hidden disabled>Sign in with Google</button>
+        </div>
+        <p id="signin-help" class="hint">Tick the box above to turn on the sign-in buttons.</p>
+        <div id="signin-message" class="message error" role="alert" hidden></div>
+      </section>
 
-    <section aria-labelledby="results-heading">
-      <h2 id="results-heading">Results</h2>
-      <p class="hint">Errors are shown in full, exactly as the provider returned them.</p>
-      <ol id="results" aria-live="polite"></ol>
-    </section>
+      <!-- Teacher details, shown once signed in -->
+      <section id="teacher-panel" class="panel" aria-labelledby="teacher-heading" hidden>
+        <h2 id="teacher-heading">Your details</h2>
+        <div class="teacher-grid">
+          <div class="field">
+            <label for="teacher-name" id="teacher-name-label"></label>
+            <input type="text" id="teacher-name" autocomplete="name" aria-describedby="teacher-name-problem">
+            <p id="teacher-name-problem" class="problem" hidden>Please enter your name.</p>
+          </div>
+          <div class="field">
+            <label for="teacher-email" id="teacher-email-label"></label>
+            <input type="text" id="teacher-email" readonly aria-describedby="teacher-email-hint">
+            <p id="teacher-email-hint" class="hint small">From your sign-in. It cannot be changed here.</p>
+          </div>
+        </div>
+        <p id="teacher-school"></p>
+        <p id="teacher-notes" class="hint small" hidden></p>
+      </section>
 
-    <section aria-labelledby="about-heading">
-      <h2 id="about-heading">About this page</h2>
-      <dl id="about-details"></dl>
-    </section>
-  </main>
+      <!-- Roll setup -->
+      <section id="setup-view" class="view" aria-labelledby="setup-heading" hidden>
+        <h1 id="setup-heading" tabindex="-1">Your leaving roll</h1>
+        <p>Start a new roll, or open a roll you saved earlier.</p>
+        <div class="settings-grid">
+          <div class="field">
+            <label for="setup-year">Transition year</label>
+            <input type="number" id="setup-year" inputmode="numeric" min="2000" max="2999" step="1" aria-describedby="setup-year-hint">
+            <p id="setup-year-hint" class="hint small">The year these students are moving schools.</p>
+          </div>
+          <div class="field">
+            <label for="setup-student-year">Year (default for the roll)</label>
+            <select id="setup-student-year" aria-describedby="setup-student-year-hint"></select>
+            <p id="setup-student-year-hint" class="hint small">Fills in Student Year for each student you add. You can change it for any student.</p>
+          </div>
+        </div>
+        <div class="buttons">
+          <button type="button" id="start-roll">Start a new roll</button>
+          <button type="button" id="open-roll-setup" class="secondary">Open a saved roll</button>
+        </div>
+      </section>
 
-  <script src="config.js"></script>
-  <script src="vendor/msal-browser-5.23.0.min.js"></script>
-  <script src="js/csv.js"></script>
-  <script src="js/mime.js"></script>
-  <script src="js/microsoft.js"></script>
-  <script src="js/google.js"></script>
-  <script src="js/app.js"></script>
+      <!-- Roll overview -->
+      <section id="roll-view" class="view" aria-labelledby="roll-heading" hidden>
+        <h1 id="roll-heading" tabindex="-1">Your leaving roll</h1>
+
+        <div class="save-bar" aria-label="Saving">
+          <p id="save-status" class="save-status" role="status"></p>
+          <div class="buttons">
+            <button type="button" id="save" hidden>Save</button>
+            <button type="button" id="save-copy" class="secondary">Save a copy</button>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="field">
+            <label for="roll-year">Transition year</label>
+            <input type="number" id="roll-year" inputmode="numeric" min="2000" max="2999" step="1" aria-describedby="roll-year-problem">
+            <p id="roll-year-problem" class="problem" hidden>Enter a four-digit year.</p>
+          </div>
+          <div class="field">
+            <label for="roll-student-year">Year (default for the roll)</label>
+            <select id="roll-student-year" aria-describedby="roll-student-year-hint"></select>
+            <p id="roll-student-year-hint" class="hint small">Used for students you add from now on. Students already added keep their own Year.</p>
+          </div>
+        </div>
+
+        <p id="roll-total" class="roll-total"></p>
+        <div class="table-wrap">
+          <table id="roll-table">
+            <caption class="visually-hidden">Students on this roll</caption>
+            <thead>
+              <tr><th scope="col">Name</th><th scope="col">Year</th><th scope="col">Destination school</th><th scope="col">Status</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr>
+            </thead>
+            <tbody id="roll-rows"></tbody>
+          </table>
+        </div>
+        <p id="roll-empty" class="hint">No students yet. Choose Add student to begin.</p>
+        <div class="buttons">
+          <button type="button" id="add-student">Add student</button>
+        </div>
+        <h2 class="small-heading">Other roll actions</h2>
+        <div class="buttons">
+          <button type="button" id="open-roll" class="secondary">Open a saved roll</button>
+          <button type="button" id="new-roll" class="secondary">Start a new roll</button>
+        </div>
+      </section>
+
+      <!-- Student form -->
+      <section id="student-view" class="view" aria-labelledby="student-heading" hidden>
+        <p><button type="button" id="back-top" class="link-button">← Back to the roll</button></p>
+        <h1 id="student-heading" tabindex="-1">Student</h1>
+        <p class="nb" id="student-nb"></p>
+        <div id="student-summary" class="summary" role="status"></div>
+        <form id="student-form" novalidate></form>
+        <div class="buttons form-end">
+          <button type="button" id="save-add-another">Save and add another student</button>
+          <button type="button" id="back-bottom" class="secondary">Back to the roll</button>
+        </div>
+        <p id="student-save-status" class="hint small" role="status"></p>
+      </section>
+    </main>
+
+    <input type="file" id="file-input" accept=".json,application/json" hidden>
+
+    <dialog id="dialog" aria-labelledby="dialog-heading" aria-describedby="dialog-body">
+      <h2 id="dialog-heading"></h2>
+      <div id="dialog-body"></div>
+      <div id="dialog-buttons" class="buttons"></div>
+    </dialog>
+  </div>
+
+  <script src="config.js?v=2026-10-20a"></script>
+  <script src="vendor/msal-browser-5.23.0.min.js?v=2026-10-20a"></script>
+  <script src="js/csv.js?v=2026-10-20a"></script>
+  <script src="js/fields.js?v=2026-10-20a"></script>
+  <script src="js/rules.js?v=2026-10-20a"></script>
+  <script src="js/rollfile.js?v=2026-10-20a"></script>
+  <script src="js/schools.js?v=2026-10-20a"></script>
+  <script src="js/microsoft.js?v=2026-10-20a"></script>
+  <script src="js/google.js?v=2026-10-20a"></script>
+  <script src="js/savefile.js?v=2026-10-20a"></script>
+  <script src="js/form.js?v=2026-10-20a"></script>
+  <script src="js/app.js?v=2026-10-20a"></script>
 </body>
 </html>

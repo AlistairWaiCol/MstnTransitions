@@ -1,0 +1,234 @@
+:root {
+  --bg: #ffffff;
+  --text: #1d2226;
+  --muted: #5a6470;
+  --border: #c9d0d6;
+  --panel: #f5f7f9;
+  --accent: #1f5f8b;
+  --accent-text: #ffffff;
+  --ok: #2e7d4f;
+  --ok-bg: #e8f5ec;
+  --error: #b3261e;
+  --error-bg: #fdecec;
+  --warn: #8a5a00;
+  --warn-bg: #fff6e0;
+  --focus: #1f5f8b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15191d;
+    --text: #e6e9ec;
+    --muted: #a3adb8;
+    --border: #3d4650;
+    --panel: #1e2329;
+    --accent: #6fb3e0;
+    --accent-text: #0d1114;
+    --ok: #5fbf86;
+    --ok-bg: #16291e;
+    --error: #f08a82;
+    --error-bg: #331a1a;
+    --warn: #f0c060;
+    --warn-bg: #2e2614;
+    --focus: #6fb3e0;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html.auth-popup #app { display: none; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+[hidden] { display: none !important; }
+
+.wrap { max-width: 52rem; margin: 0 auto; padding: 0 1rem; }
+main.wrap { padding-top: 1.25rem; padding-bottom: 4rem; }
+
+.site-header { border-bottom: 1px solid var(--border); background: var(--panel); }
+.header-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.site-title { margin: 0; font-weight: 600; }
+.header-account { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; overflow-wrap: anywhere; }
+
+h1 { font-size: 1.6rem; line-height: 1.25; margin: 0.5rem 0 0.75rem; }
+h1:focus { outline: none; }
+h2 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; }
+.small-heading { font-size: 1rem; color: var(--muted); margin-top: 2.5rem; }
+
+p { margin: 0 0 0.75rem; }
+.hint { color: var(--muted); }
+.small { font-size: 0.9rem; }
+.nb { font-weight: 600; }
+
+.banner {
+  border: 1px solid var(--warn);
+  border-left-width: 4px;
+  background: var(--warn-bg);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.privacy, .panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+}
+.panel h2 { margin-top: 0; }
+
+.message { padding: 0.75rem 1rem; border-radius: 4px; margin-top: 1rem; }
+.message.error { background: var(--error-bg); border-left: 4px solid var(--error); }
+
+/* ---- Buttons ---- */
+
+.buttons { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1rem 0; }
+
+button {
+  font: inherit;
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+  cursor: pointer;
+  min-height: 44px;
+}
+button.secondary { background: transparent; color: var(--accent); }
+button.small { padding: 0.3rem 0.75rem; min-height: 36px; font-size: 0.95rem; }
+button.danger { border-color: var(--error); color: var(--error); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.link-button {
+  background: none; border: none; color: var(--accent); padding: 0.25rem 0; min-height: 0;
+  text-decoration: underline;
+}
+
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* ---- Form controls ---- */
+
+label, legend { font-weight: 600; }
+legend { padding: 0; margin-bottom: 0.4rem; }
+fieldset { border: none; padding: 0; margin: 0; min-width: 0; }
+.tick-fieldset { margin-top: 0.75rem; }
+
+input[type="text"], input[type="number"], select, textarea {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  padding: 0.5rem 0.6rem;
+  margin-top: 0.3rem;
+  min-height: 44px;
+}
+input.short, input[type="number"] { max-width: 10rem; }
+select { max-width: 30rem; }
+textarea { min-height: 7rem; resize: vertical; }
+input[readonly] { background: var(--panel); color: var(--muted); }
+
+input[type="checkbox"], input[type="radio"] {
+  width: 1.25rem; height: 1.25rem; margin: 0 0.5rem 0 0; flex: none; accent-color: var(--accent);
+}
+
+label.tick, label.option {
+  display: flex; align-items: flex-start; gap: 0.1rem; font-weight: normal; padding: 0.35rem 0; cursor: pointer;
+}
+label.tick input, label.option input { margin-top: 0.15rem; }
+
+.options { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0 1rem; }
+.options.rating { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
+
+.req { font-weight: normal; color: var(--muted); font-size: 0.9rem; }
+
+.field { margin: 0 0 1.4rem; padding-left: 0.75rem; border-left: 4px solid transparent; }
+.field.is-missing { border-left-color: var(--warn); }
+.field.is-invalid { border-left-color: var(--error); }
+.field .hint { margin: 0.2rem 0 0.2rem; }
+
+.problem { margin: 0.3rem 0 0; font-size: 0.9rem; font-weight: 600; }
+.is-missing .problem { color: var(--warn); }
+.is-invalid .problem, #teacher-name-problem, #roll-year-problem { color: var(--error); }
+
+.counter { margin: 0.25rem 0 0; color: var(--muted); }
+.counter.at-limit { color: var(--warn); font-weight: 600; }
+
+.settings-grid, .teacher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0 1.5rem; }
+.settings-grid .field, .teacher-grid .field { padding-left: 0; border-left: none; margin-bottom: 1rem; }
+
+/* ---- Roll overview ---- */
+
+.save-bar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 1rem;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 0 1rem; margin: 0 0 1.25rem;
+}
+.save-status { margin: 0.75rem 0; }
+.save-status.unsaved { color: var(--warn); font-weight: 600; }
+.save-bar .buttons { margin: 0.6rem 0; }
+
+.roll-total { font-weight: 600; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+thead th { background: var(--panel); font-size: 0.95rem; }
+tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+tbody th { font-weight: 600; overflow-wrap: anywhere; }
+td.actions { white-space: nowrap; text-align: right; }
+td.actions button + button { margin-left: 0.5rem; }
+.status-complete { color: var(--ok); font-weight: 600; }
+.status-missing { color: var(--warn); font-weight: 600; }
+
+/* ---- Student form ---- */
+
+.summary {
+  border: 1px solid var(--warn); border-left-width: 4px; background: var(--warn-bg);
+  border-radius: 4px; padding: 0.75rem 1rem; margin: 1rem 0 1.5rem;
+}
+.summary.complete { border-color: var(--ok); background: var(--ok-bg); }
+.summary p { margin: 0; font-weight: 600; }
+.summary ul { margin: 0.5rem 0 0; padding-left: 1.25rem; columns: 2 18rem; }
+.summary a { color: var(--text); }
+
+.form-section { border-top: 2px solid var(--border); padding-top: 0.25rem; }
+.form-section .intro { color: var(--muted); }
+.form-end { border-top: 2px solid var(--border); padding-top: 1rem; }
+
+/* ---- Dialog ---- */
+
+dialog {
+  max-width: min(34rem, calc(100vw - 2rem));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  padding: 1.25rem 1.5rem;
+}
+dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+dialog h2 { margin-top: 0; }
+dialog .buttons { margin-bottom: 0; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+code { font-family: ui-monospace, Consolas, monospace; }
+
+@media (max-width: 34rem) {
+  h1 { font-size: 1.35rem; }
+  .options { grid-template-columns: 1fr; }
+  thead { display: none; }
+  table, tbody, tr, th, td { display: block; width: 100%; }
+  tbody tr { border-bottom: 1px solid var(--border); padding: 0.5rem 0; }
+  tbody th, tbody td { border: none; padding: 0.15rem 0.75rem; }
+  td.actions { text-align: left; padding-top: 0.4rem; }
+  .summary ul { columns: 1; }
+}
